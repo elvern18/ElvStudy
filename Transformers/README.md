@@ -1,10 +1,10 @@
 # Transformers
 
-![image.png](image.png)
+![image.png](images/image.png)
 
 # Why Transformers
 
-![image.png](image%201.png)
+![image.png](images/image%201.png)
 
 Context: RNNs were previously used
 
@@ -28,7 +28,7 @@ Context: RNNs were previously used
 
 ## 1. Word embeddings
 
-![image.png](image%202.png)
+![image.png](images/image%202.png)
 
 convert input / output to word embedding of dimension `d` 
 
@@ -37,7 +37,7 @@ convert input / output to word embedding of dimension `d`
 
 ## **2. Positional Encoding**
 
-![image.png](image%203.png)
+![image.png](images/image%203.png)
 
 ![](https://aiml.com/wp-content/uploads/2023/09/example_of_positional_encoding_in_transformers.png)
 
@@ -73,11 +73,11 @@ Advantages:
 
 ## 3. Self-Attention and Multi-Head Attention
 
-![image.png](image%204.png)
+![image.png](images/image%204.png)
 
-![image.png](image%205.png)
+![image.png](images/image%205.png)
 
-![image.png](image%206.png)
+![image.png](images/image%206.png)
 
 For each token in a sequence, we want to measure how relevant the token is to all other tokens in the same sequence, and place more importance of those that are relevant to capture contextual information.
 
@@ -157,9 +157,9 @@ $$
 
 ### Multi-Head Attention
 
-![image.png](image%207.png)
+![image.png](images/image%207.png)
 
-![image.png](image%208.png)
+![image.png](images/image%208.png)
 
 Same as Self-Attention, but split subspaces of Q, K and V matrices into `h` smaller matrices instead of using 1 whole matrix for Q, K and V to get `h` heads. 
 
@@ -194,7 +194,7 @@ $$
 
 ### Residual Connection
 
-![image.png](image%209.png)
+![image.png](images/image%209.png)
 
 This layer is the `Add & Norm` part 
 
@@ -230,13 +230,13 @@ Pre-LN is more commonly used because gradient flow is simpler (i.e. lower chance
 
 ## 5. FFN
 
-![image.png](image%2010.png)
+![image.png](images/image%2010.png)
 
 The normalised residual output is fed into a position-wise feed forward neural network, which  are a couple of layers with `ReLu` activation. The FFN output has residual connection and LM again.
 
 ## 6. Cross-Attention
 
-![image.png](image%2011.png)
+![image.png](images/image%2011.png)
 
 Self-attention occurs within the encoder and decoder itself, where tokens receive context of tokens in the same sequence. 
 
@@ -258,7 +258,7 @@ Cross-attention is exactly that lookup:
 
 ## 7. Decoding Output
 
-![image.png](image%2012.png)
+![image.png](images/image%2012.png)
 
 The decoder’s outputs are fed into a final linear transformation layer and softmax function to transform them into a probability distribution over the word vector space. 
 
