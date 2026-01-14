@@ -117,7 +117,8 @@ The projections are computed via matrix multiplication:
 $$
 \begin{aligned}
 Q = X W_Q \in \mathbb{R}^{n \times d_k}
-\\ K = X W_K \in \mathbb{R}^{n \times d_k}\\ V = X W_V \in \mathbb{R}^{n \times d_v}
+K = X W_K \in \mathbb{R}^{n \times d_k}
+V = X W_V \in \mathbb{R}^{n \times d_v}
 \end{aligned}
 $$
 
@@ -145,8 +146,8 @@ Self-Attention Output / Head: Compute a weighted sum of value vector. Each outpu
 
 $$
 \begin{aligned}
-S =; \frac{Q K^\top}{\sqrt{d_k}} \\
-A =; \mathrm{softmax}(S) \\
+S = \frac{Q K^\top}{\sqrt{d_k}} \\
+A = \mathrm{softmax}(S) \\
 \text{Head} = A V
 \end{aligned}
 $$
