@@ -105,7 +105,7 @@ Each row of `X` corresponds to one token embedding.
 The Transformer learns three linear projection matrices:
 
 $$
-W_Q \in \mathbb{R}^{d_{\text{model}} \times d_k} \newline W_K \in \mathbb{R}^{d_{\text{model}} \times d_k} \newline W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}
+W_Q \in \mathbb{R}^{d_{\text{model}} \times d_k} \\ W_K \in \mathbb{R}^{d_{\text{model}} \times d_k} \\ W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}
 $$
 
 1. Computing Queries, Keys, and Values
@@ -114,7 +114,7 @@ The projections are computed via matrix multiplication:
 
 $$
 Q = X W_Q \in \mathbb{R}^{n \times d_k}
- \newline K = X W_K \in \mathbb{R}^{n \times d_k}\newline V = X W_V \in \mathbb{R}^{n \times d_v}
+ \\ K = X W_K \in \mathbb{R}^{n \times d_k}\\ V = X W_V \in \mathbb{R}^{n \times d_v}
 $$
 
 1. Interpretation
@@ -140,7 +140,7 @@ Attention Weights: Row-wise softmax to convert scores into attention weights, wh
 Self-Attention Output / Head: Compute a weighted sum of value vector. Each output row is a context aware representation of a token. 
 
 $$
-S = \frac{Q K^\top}{\sqrt{d_k}} \in \mathbb{R}^{n \times n} \newline A = \mathrm{softmax}(S) \in \mathbb{R}^{n \times n} \newline Head  = A V \in \mathbb{R}^{n \times d_v}
+S = \frac{Q K^\top}{\sqrt{d_k}} \in \mathbb{R}^{n \times n} \\ A = \mathrm{softmax}(S) \in \mathbb{R}^{n \times n} \\ Head  = A V \in \mathbb{R}^{n \times d_v}
 $$
 
 ### Multi-Head Attention
@@ -154,42 +154,28 @@ Same as Self-Attention, but split subspaces of Q, K and V matrices into `h` smal
 $$
 \begin{aligned}
 &\textbf{Multi-Head Self-Attention} \\[4pt]
-
-&n:\text{ sequence length},\quad
-d_{\text{model}}:\text{ embedding dimension},\quad
-h:\text{ number of heads} \\[2pt]
-
+&n:\text{ sequence length},\quad d_{\text{model}}:\text{ embedding dimension},\quad h:\text{ number of heads} \\[2pt]
 & d_q = d_k = d_v = \frac{d_{\text{model}}}{h} \\[6pt]
 
 &X \in \mathbb{R}^{n \times d_{\text{model}}} \\[6pt]
 
-&\forall i \in \{1,\dots,h\}:\quad
-W_Q^{(i)}, W_K^{(i)}, W_V^{(i)}
-\in \mathbb{R}^{d_{\text{model}} \times d_k} \\[6pt]
+&\forall i \in \{1,\dots,h\}: \quad
+W_Q^{(i)},\, W_K^{(i)},\, W_V^{(i)} \in \mathbb{R}^{d_{\text{model}} \times d_k} \\[6pt]
 
 &Q^{(i)} = X W_Q^{(i)} \in \mathbb{R}^{n \times d_k} \\[-1pt]
 &K^{(i)} = X W_K^{(i)} \in \mathbb{R}^{n \times d_k} \\[-1pt]
 &V^{(i)} = X W_V^{(i)} \in \mathbb{R}^{n \times d_v} \\[8pt]
 
-&A^{(i)} =
-\mathrm{softmax}\!\left(
-\frac{Q^{(i)} (K^{(i)})^\top}{\sqrt{d_k}}
-\right)
+&A^{(i)} = \mathrm{softmax}\!\left( \frac{Q^{(i)} (K^{(i)})^\top}{\sqrt{d_k}} \right)
 \in \mathbb{R}^{n \times n} \\[8pt]
 
-&\mathrm{head}^{(i)} =
-A^{(i)} V^{(i)}
-\in \mathbb{R}^{n \times d_v} \\[8pt]
+&\mathrm{head}^{(i)} = A^{(i)} V^{(i)} \in \mathbb{R}^{n \times d_v} \\[8pt]
 
-&\mathrm{Concat}\!\left(
-\mathrm{head}^{(1)},\dots,\mathrm{head}^{(h)}
-\right)
+&\mathrm{Concat}\!\left(\mathrm{head}^{(1)},\dots,\mathrm{head}^{(h)}\right)
 \in \mathbb{R}^{n \times (h d_v)} \\[6pt]
 
-&\mathrm{MultiHeadAttention}(X) =
-\mathrm{Concat}\!\left(
-\mathrm{head}^{(1)},\dots,\mathrm{head}^{(h)}
-\right) W_O \\[4pt]
+&\mathrm{MultiHeadAttention}(X)
+= \mathrm{Concat}\!\left(\mathrm{head}^{(1)},\dots,\mathrm{head}^{(h)}\right) W_O \\[4pt]
 
 &W_O \in \mathbb{R}^{(h d_v) \times d_{\text{model}}}
 \quad
@@ -225,7 +211,7 @@ This mechanism addresses the common issue of vanishing gradients in deep network
 Hence, there will be smoother gradient flow ⇒ more effective training 
 
 $$
-y = F(x) + x \newline 
+y = F(x) + x \\ 
 $$
 
 Residual Connections help the network train better as the neural network contribute very little at initialisation and the unimpeded 
