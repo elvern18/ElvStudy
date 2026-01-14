@@ -165,44 +165,33 @@ Same as Self-Attention, but split subspaces of Q, K and V matrices into `h` smal
 
 $$
 \begin{aligned}
-\textbf{Multi-Head Self-Attention} \\[6pt]
-
 n &: \text{sequence length}, \quad
 d_{\text{model}} : \text{embedding dimension}, \quad
-h : \text{number of heads} \\[6pt]
-
-d_q &= d_k = d_v = \frac{d_{\text{model}}}{h} \\[8pt]
-
-X &\in \mathbb{R}^{n \times d_{\text{model}}} \\[8pt]
-
-\forall i \in \{1,\dots,h\}: \quad
+h : \text{number of heads} \[6pt]
+d_q &= d_k = d_v = \frac{d_{\text{model}}}{h} \[8pt]
+X &\in \mathbb{R}^{n \times d_{\text{model}}} \[8pt]
+\forall i \in {1,\dots,h}: \quad
 W_Q^{(i)}, W_K^{(i)}, W_V^{(i)}
-&\in \mathbb{R}^{d_{\text{model}} \times d_k} \\[8pt]
-
-Q^{(i)} &= X W_Q^{(i)} \in \mathbb{R}^{n \times d_k} \\
-K^{(i)} &= X W_K^{(i)} \in \mathbb{R}^{n \times d_k} \\
-V^{(i)} &= X W_V^{(i)} \in \mathbb{R}^{n \times d_v} \\[8pt]
-
+&\in \mathbb{R}^{d_{\text{model}} \times d_k} \[8pt]
+Q^{(i)} &= X W_Q^{(i)} \in \mathbb{R}^{n \times d_k} \
+K^{(i)} &= X W_K^{(i)} \in \mathbb{R}^{n \times d_k} \
+V^{(i)} &= X W_V^{(i)} \in \mathbb{R}^{n \times d_v} \[8pt]
 A^{(i)} &=
-\mathrm{softmax}\!\left(
+\mathrm{softmax}!\left(
 \frac{Q^{(i)} (K^{(i)})^\top}{\sqrt{d_k}}
 \right)
-\in \mathbb{R}^{n \times n} \\[8pt]
-
+\in \mathbb{R}^{n \times n} \[8pt]
 \mathrm{head}^{(i)} &=
-A^{(i)} V^{(i)} \in \mathbb{R}^{n \times d_v} \\[8pt]
-
-\mathrm{Concat}\!\left(
+A^{(i)} V^{(i)} \in \mathbb{R}^{n \times d_v} \[8pt]
+\mathrm{Concat}!\left(
 \mathrm{head}^{(1)}, \dots, \mathrm{head}^{(h)}
 \right)
-&\in \mathbb{R}^{n \times (h d_v)} \\[8pt]
-
+&\in \mathbb{R}^{n \times (h d_v)} \[8pt]
 \mathrm{MultiHeadAttention}(X)
 &=
-\mathrm{Concat}\!\left(
+\mathrm{Concat}!\left(
 \mathrm{head}^{(1)}, \dots, \mathrm{head}^{(h)}
-\right) W_O \\[6pt]
-
+\right) W_O \[6pt]
 W_O &\in \mathbb{R}^{(h d_v) \times d_{\text{model}}}
 \end{aligned}
 $$
