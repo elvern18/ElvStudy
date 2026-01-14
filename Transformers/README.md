@@ -105,7 +105,9 @@ Each row of `X` corresponds to one token embedding.
 The Transformer learns three linear projection matrices:
 
 $$
+\begin{aligned}
 W_Q \in \mathbb{R}^{d_{\text{model}} \times d_k} \\ W_K \in \mathbb{R}^{d_{\text{model}} \times d_k} \\ W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}
+\end{aligned}
 $$
 
 1. Computing Queries, Keys, and Values
@@ -113,8 +115,10 @@ $$
 The projections are computed via matrix multiplication:
 
 $$
+\begin{aligned}
 Q = X W_Q \in \mathbb{R}^{n \times d_k}
- \\ K = X W_K \in \mathbb{R}^{n \times d_k}\\ V = X W_V \in \mathbb{R}^{n \times d_v}
+\\ K = X W_K \in \mathbb{R}^{n \times d_k}\\ V = X W_V \in \mathbb{R}^{n \times d_v}
+\end{aligned}
 $$
 
 1. Interpretation
@@ -140,7 +144,9 @@ Attention Weights: Row-wise softmax to convert scores into attention weights, wh
 Self-Attention Output / Head: Compute a weighted sum of value vector. Each output row is a context aware representation of a token. 
 
 $$
+\begin{aligned}
 S = \frac{Q K^\top}{\sqrt{d_k}} \in \mathbb{R}^{n \times n} \\ A = \mathrm{softmax}(S) \in \mathbb{R}^{n \times n} \\ Head  = A V \in \mathbb{R}^{n \times d_v}
+\end{aligned}
 $$
 
 ### Multi-Head Attention
@@ -211,7 +217,7 @@ This mechanism addresses the common issue of vanishing gradients in deep network
 Hence, there will be smoother gradient flow ⇒ more effective training 
 
 $$
-y = F(x) + x \\ 
+y = F(x) + x 
 $$
 
 Residual Connections help the network train better as the neural network contribute very little at initialisation and the unimpeded 
