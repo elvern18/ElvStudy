@@ -106,7 +106,6 @@ The Transformer learns three linear projection matrices:
 
 $$
 W_Q \in \mathbb{R}^{d_{\text{model}} \times d_k} \newline W_K \in \mathbb{R}^{d_{\text{model}} \times d_k} \newline W_V \in \mathbb{R}^{d_{\text{model}} \times d_v}
-
 $$
 
 1. Computing Queries, Keys, and Values
@@ -116,7 +115,6 @@ The projections are computed via matrix multiplication:
 $$
 Q = X W_Q \in \mathbb{R}^{n \times d_k}
  \newline K = X W_K \in \mathbb{R}^{n \times d_k}\newline V = X W_V \in \mathbb{R}^{n \times d_v}
-
 $$
 
 1. Interpretation
@@ -143,7 +141,6 @@ Self-Attention Output / Head: Compute a weighted sum of value vector. Each outpu
 
 $$
 S = \frac{Q K^\top}{\sqrt{d_k}} \in \mathbb{R}^{n \times n} \newline A = \mathrm{softmax}(S) \in \mathbb{R}^{n \times n} \newline Head  = A V \in \mathbb{R}^{n \times d_v}
-
 $$
 
 ### Multi-Head Attention
