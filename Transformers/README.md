@@ -116,8 +116,8 @@ The projections are computed via matrix multiplication:
 
 $$
 \begin{aligned}
-Q = X W_Q \in \mathbb{R}^{n \times d_k}
-K = X W_K \in \mathbb{R}^{n \times d_k}
+Q = X W_Q \in \mathbb{R}^{n \times d_k} \\ 
+K = X W_K \in \mathbb{R}^{n \times d_k} \\ 
 V = X W_V \in \mathbb{R}^{n \times d_v}
 \end{aligned}
 $$
