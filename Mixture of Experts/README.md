@@ -104,11 +104,11 @@ Many implementations also count a separate output projection (LM head) of simila
 ### Total Parameters
 
 $$
-\text{Total Parameters}
-= \text{MoE FFNs}
-+ \text{Attention}
-+ \text{Embeddings}
-+ \text{LM head}
+\text{Total Parameters} \\ 
+= \text{MoE FFNs} \\ 
++ \text{Attention} \\ 
++ \text{Embeddings} \\ 
++ \text{LM head} \\ 
 = 45.1 + 1.34 + 0.13 + 0.13
 = 46.7\text{B}
 $$
@@ -136,7 +136,7 @@ y = \sum_{i=1}^{n} G(x)_i\,E_i(x)
 $$
 
 $$
-G_{\sigma}(x) = \operatorname{Softmax}(x W_g)
+G_{\sigma}(x) = \mathrm{Softmax}(x W_g)
 $$
 
 ### Noisy Top-K Gating
@@ -147,13 +147,13 @@ $$
 1. We add some noise
 
 $$
-H(x)_i = (xW_g)_i + \mathcal{N}(0,1)\cdot \operatorname{Softplus}\big((x W_{\text{noise}})_i\big)
+H(x)_i = (xW_g)_i + \mathcal{N}(0,1)\cdot \mathrm{Softplus}\big((x W_{\text{noise}})_i\big)
 $$
 
 1. We only pick the top $k$
 
 $$
-\operatorname{KeepTopK}(v, k)_i =
+\mathrm{KeepTopK}(v, k)_i =
 \begin{cases}
 v_i & \text{if } v_i \text{ is in the top-}k\text{ elements of } v,\\
 -\infty & \text{otherwise.}
@@ -163,7 +163,7 @@ $$
 1. We apply the softmax
 
 $$
-G(x) = \operatorname{Softmax}\big(\operatorname{KeepTopK}(H(x), k)\big)
+G(x) = \mathrm{Softmax}\big(\mathrm{KeepTopK}(H(x), k)\big)
 $$
 
 ## Load Balancing of Tokens
