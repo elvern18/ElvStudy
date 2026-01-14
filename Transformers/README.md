@@ -145,9 +145,9 @@ Self-Attention Output / Head: Compute a weighted sum of value vector. Each outpu
 
 $$
 \begin{aligned}
-S &= \frac{Q K^\top}{\sqrt{d_k}} \in \mathbb{R}^{n \times n} \\
-A &= \mathrm{softmax}(S) \in \mathbb{R}^{n \times n} \\
-\text{Head} &= A V \in \mathbb{R}^{n \times d_v}
+S \;=\; \frac{Q K^\top}{\sqrt{d_k}} \\
+A \;=\; \mathrm{softmax}(S) \\
+\text{Head} \;=\; A V
 \end{aligned}
 $$
 
