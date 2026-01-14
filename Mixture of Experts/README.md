@@ -105,13 +105,12 @@ Many implementations also count a separate output projection (LM head) of simila
 
 $$
 \begin{aligned}
-\text{Total Parameters} \\ 
-= \text{MoE FFNs} \\ 
-+ \text{Attention} \\ 
-+ \text{Embeddings} \\ 
-+ \text{LM head} \\ 
-= 45.1 + 1.34 + 0.13 + 0.13
-= 46.7\text{B}
+\mathrm{Total\ Parameters} &= \mathrm{MoE\ FFNs} \\
+&+ \mathrm{Attention} \\
+&+ \mathrm{Embeddings} \\
+&+ \mathrm{LM\ head} \\
+&= 45.1 + 1.34 + 0.13 + 0.13 \\
+&= 46.7\,\mathrm{B}
 \end{aligned}
 $$
 
