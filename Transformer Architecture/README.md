@@ -153,7 +153,7 @@ Each decoder token can attend to **all encoder tokens** (no causal mask on the e
 Still **autoregressive** on the target sequence:
 
 $$
-\sum_{t=1}^{T_{\text{tgt}}} \log p(y_t | y_{<t}, X^{\text{src}})
+\sum_{t=1}^{T_{\mathrm{tgt}}} \log p(y_t \mid y_{<t}, X^{\mathrm{src}})
 $$
 
 - The source sequence is fully consumed by the encoder
