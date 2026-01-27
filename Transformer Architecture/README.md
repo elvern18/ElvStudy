@@ -1,6 +1,6 @@
 # Encoder, Decoder, Encoder-Decoder
 
-![image.png](image.png)
+![image.png](images/image.png)
 
 # TLDR:
 
@@ -17,7 +17,7 @@
 
 **Examples:** BERT, RoBERTa, DeBERTa
 
-![image.png](image%201.png)
+![image.png](images/image%201.png)
 
 ## Architecture
 
