@@ -151,11 +151,6 @@ Each decoder token can attend to **all encoder tokens** (no causal mask on the e
 ### Training objective
 
 Still **autoregressive** on the target sequence:
-
-$$
-\sum_{t=1}^{T} \log p(y_t \mid y_{<t}, X)
-$$
-
 - The source sequence is fully consumed by the encoder
 - The decoder conditions on encoder outputs via cross-attention
 
