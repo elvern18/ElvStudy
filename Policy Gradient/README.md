@@ -84,7 +84,7 @@ $\nabla_\theta J(\theta) = \mathbb{E}_{\tau \sim p_\theta(\tau)} [\nabla_\theta 
 ![image.png](images/image%206.png)
 
 The standard RL objective is an expectation of rewards under the current policy distribution $p_\theta(\tau)$. To evaluate this using data from a different "proposal" distribution $\bar{p}(\tau)$ (an old policy), we use **importance sampling**:
-$J(\theta) = \mathbb{E}_{\tau \sim \bar{p}(\tau)} \left[ \frac{p\theta(\tau)}{\bar{p}(\tau)} r(\tau) \right]$
+$J(\theta) = \mathbb{E}_{\tau \sim \bar{p}(\tau)} \left[ \frac{p_\theta(\tau)}{\bar{p}(\tau)} r(\tau) \right]$
 The term $\frac{p_\theta(\tau)}{\bar{p}(\tau)}$ is the **importance weight**. When we expand the probability of a trajectory, the initial state distribution and environmental dynamics cancel out, leaving a product of the ratios of action probabilities:
 $\frac{p_\theta(\tau)}{\bar{p}(\tau)} = \frac{p(s_1) \prod_{t=1}^T \pi_\theta(a_t|s_t) p(s_{t+1}|s_t, a_t)}{p(s_1) \prod_{t=1}^T \bar{\pi}(a_t|s_t) p(s_{t+1}|s_t, a_t)} = \prod_{t=1}^T \frac{\pi_\theta(a_t|s_t)}{\bar{\pi}(a_t|s_t)}$
 
@@ -96,7 +96,7 @@ A significant practical challenge is that for large horizons ($T$), this product
 
 To solve this, the objective is shifted from an expectation over full trajectories to an **expectation over individual timesteps**. In this "common final form," the importance weights are applied per-step, which is much less likely to explode:
 $\nabla_{\theta'} J(\theta') \approx \frac{1}{N} \sum_{i=1}^N \sum_{t=1}^T \frac{\pi_{\theta'}(a_{i,t}|s_{i,t})}{\pi_\theta(a_{i,t}|s_{i,t})} \nabla_{\theta'} \log \pi_{\theta'}(a_{i,t}|s_{i,t}) \left( \sum_{t'=t}^T r(s_{i,t'}, a_{i,t'}) - b \right)$
-Note that this technically requires a ratio of the state distributions $\frac{\pi_{\theta'}(s_t)}{\pi_\theta(s_t)}$, but this is **often approximated as 1** in practice.
+Note: this technically requires a ratio of the state distributions $\frac{\pi_{\theta'}(s_t)}{\pi_\theta(s_t)}$, but this is **often approximated as 1** in practice.
 
 ### 3. Constraints on Policy Change (KL Divergence)
 
