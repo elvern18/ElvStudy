@@ -180,3 +180,6 @@ Intuitions for why it degrades gracefully:
 - **Controlled decoding:** Antidistillation is a form of reward-guided decoding where the "reward" is "how much does this token hurt the student." Related to RLHF decoding, contrastive decoding, energy-based decoding.
 - **Data poisoning:** Bridge between data poisoning literature and model security — crafting training data that induces bad downstream behavior.
 - **Zeroth-order optimization:** The finite-difference trick for approximating directional derivatives through weight space is the same technique used in evolutionary strategies / zeroth-order gradient estimation.
+
+# References
+- https://arxiv.org/pdf/2504.13146
