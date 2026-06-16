@@ -1,0 +1,1760 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Self-directed ML learning notes and explorations.">
+      
+      
+        <meta name="author" content="elvern18">
+      
+      
+        <link rel="canonical" href="https://elvern18.github.io/ElvStudy/Reinforcement%20Learning/Actor-Critic%20Methods/">
+      
+      
+        <link rel="prev" href="../../Quantization/">
+      
+      
+        <link rel="next" href="../Imitation%20Learning/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Actor-Critic Methods - ElvStudy</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#actor-critic-methods" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ElvStudy" class="md-header__button md-logo" aria-label="ElvStudy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ElvStudy
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Actor-Critic Methods
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/elvern18/ElvStudy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    elvern18/ElvStudy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ElvStudy" class="md-nav__button md-logo" aria-label="ElvStudy" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ElvStudy
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/elvern18/ElvStudy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    elvern18/ElvStudy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ElvStudy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../KV%20Caching/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KV Caching
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    KV Caching
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../LoRA/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LoRA
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    LoRA
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Mixture%20of%20Experts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mixture of Experts
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Mixture of Experts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Quantization/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quantization
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quantization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reinforcement Learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reinforcement Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Actor Critic Methods
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Actor Critic Methods
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../Imitation%20Learning/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Imitation Learning
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Imitation Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../Offline%20RL/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Offline RL
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Offline RL
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../Policy%20Gradient/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Policy Gradient
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Policy Gradient
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../Q-Learning/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Q Learning
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Q Learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research Papers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research Papers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Research%20Papers/Antidistillation%20Fingerprinting/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Antidistillation Fingerprinting
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Antidistillation Fingerprinting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Research%20Papers/Antidistillation%20Sampling/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Antidistillation Sampling
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Antidistillation Sampling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scaling Book
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scaling Book
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Scaling%20Book/Roofline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roofline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Transformer%20Architecture/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformer Architecture
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transformer Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../Transformers/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transformers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Transformers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="actor-critic-methods">Actor-Critic Methods<a class="headerlink" href="#actor-critic-methods" title="Permanent link">&para;</a></h1>
+<p><img alt="image.png" src="images/image.png" /></p>
+<p><img alt="image.png" src="images/image%201.png" /></p>
+<h1 id="improving-policy-gradients">Improving Policy Gradients<a class="headerlink" href="#improving-policy-gradients" title="Permanent link">&para;</a></h1>
+<p>Improving policy gradients focuses on making the algorithms more <strong>data-efficient</strong> and <strong>reducing the noise</strong> in gradient estimates. According to the sources, this is primarily achieved by moving from simple sample-based reward estimates to more sophisticated methods for estimating future rewards.</p>
+<p>The key components of this improvement include:</p>
+<h2 id="1-moving-beyond-single-samples">1. Moving Beyond Single Samples<a class="headerlink" href="#1-moving-beyond-single-samples" title="Permanent link">&para;</a></h2>
+<p>Vanilla policy gradients typically use a single-sample estimate of the "reward-to-go". The sources suggest that using the <strong>true expected reward-to-go</strong> (<span class="arithmatex">\(Q(s_t, a_t)\)</span>) would be significantly better. Better estimates of these values lead to <strong>less noisy gradients</strong>, which allows the policy to improve more reliably.</p>
+<h2 id="2-using-the-advantage-function">2. Using the Advantage Function<a class="headerlink" href="#2-using-the-advantage-function" title="Permanent link">&para;</a></h2>
+<p>A major improvement involves using the <strong>Advantage function</strong>, <span class="arithmatex">\(A^\pi(s_t, a_t)\)</span>, instead of raw rewards.</p>
+<ul>
+<li><strong>Definition</strong>: It is defined as <span class="arithmatex">\(A^\pi(s_t, a_t) = Q^\pi(s_t, a_t) - V^\pi(s_t)\)</span>.</li>
+<li><strong>Purpose</strong>: It represents <strong>how much better</strong> a specific action (<span class="arithmatex">\(a_t\)</span>) is compared to the average expected reward at that state (<span class="arithmatex">\(s_t\)</span>).</li>
+<li><strong>Baseline</strong>: By subtracting a baseline (like the state-value function <span class="arithmatex">\(V^\pi(s_t)\)</span>), the algorithm reduces variance, making the training process more stable.</li>
+</ul>
+<h2 id="3-the-actor-critic-framework">3. The Actor-Critic Framework<a class="headerlink" href="#3-the-actor-critic-framework" title="Permanent link">&para;</a></h2>
+<p>These improvements form the basis of <strong>Actor-Critic methods</strong>. In this framework:</p>
+<ul>
+<li><strong>The Actor</strong>: The policy itself, which is updated to do more of the "good" stuff and less of the "bad" stuff.</li>
+<li><strong>The Critic</strong>: A learned model (often a neural network) that estimates the expected return (<span class="arithmatex">\(V^\pi, Q^\pi, \text{or } A^\pi\)</span>).</li>
+</ul>
+<p>Note that both are being learnt.</p>
+<h2 id="4-methods-for-estimating-value">4. Methods for Estimating Value<a class="headerlink" href="#4-methods-for-estimating-value" title="Permanent link">&para;</a></h2>
+<p>To improve the policy, the "critic" must accurately evaluate the current policy. The sources outline three ways to perform this <strong>policy evaluation</strong>:</p>
+<ul>
+<li><strong>Monte Carlo Estimation</strong>: Fitting a model directly to the observed sum of future rewards from actual roll-outs.</li>
+<li><strong>Bootstrapping (Temporal Difference Learning)</strong>: Fitting a model to a target consisting of the current reward plus the value estimate of the next state (<span class="arithmatex">\(r + V\)</span>). This is often less noisy than Monte Carlo but can be biased.</li>
+<li><strong>N-step Returns</strong>: A hybrid approach that uses the sum of rewards for <span class="arithmatex">\(n\)</span> steps plus the value estimate of the state reached at step <span class="arithmatex">\(n\)</span>. This is often the most effective method in practice.</li>
+</ul>
+<p>Note: Only need to estimate <span class="arithmatex">\(V^\pi\)</span></p>
+<p><img alt="image.png" src="images/image%202.png" /></p>
+<h3 id="1-monte-carlo-estimation">1. Monte Carlo Estimation<a class="headerlink" href="#1-monte-carlo-estimation" title="Permanent link">&para;</a></h3>
+<p>Run the whole episode, sum all the rewards, use that as training label. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Episode 1:  s₀ → s₁ → s₂ → ... → s<span class="nb">_</span>T   (total return: 12)
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Episode 2:  s₀ → s₁ → s₃ → ... → s<span class="nb">_</span>T   (total return: 3)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Episode 3:  s₀ → s₄ → s₂ → ... → s<span class="nb">_</span>T   (total return: 8)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>...
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Episode 1000: ...                         (total return: 10)
+</code></pre></div>
+<p>This method involves sampling actual "roll-outs" from the policy and using the observed sum of rewards as a target.</p>
+<ul>
+<li><strong>The Process</strong>: You collect a batch of data and aggregate single-sample estimates of the "reward-to-go".</li>
+<li><strong>Target</strong>: For a state <span class="arithmatex">\(s_t\)</span>, the target value is the actual sum of rewards from that point until the end of the episode: <span class="arithmatex">\(y_{i,t} \approx \sum_{t'=t}^{T} r(s_{i,t'}, a_{i,t'})\)</span>.</li>
+<li><strong>Supervised Learning</strong>: You then use supervised learning to train a neural network (<span class="arithmatex">\(\hat{V}_\phi^\pi\)</span>) to minimize the difference between its predictions and these actual summed rewards.</li>
+</ul>
+<p><img alt="image.png" src="images/image%203.png" /></p>
+<h3 id="2-bootstrapping-temporal-difference-learning">2. Bootstrapping (Temporal Difference Learning)<a class="headerlink" href="#2-bootstrapping-temporal-difference-learning" title="Permanent link">&para;</a></h3>
+<p>Instead of waiting for an episode to end, bootstrapping uses the current reward plus the model’s <strong>own estimate</strong> of the next state's value.</p>
+<ul>
+<li><strong>Target</strong>:  <span class="arithmatex">\(y_{i,t} \approx r(s_{i,t}, a_{i,t}) + \hat{V}_\phi^\pi(s_{i,t+1})\)</span>.</li>
+<li><strong>Iterative Updates</strong>: Because the target depends on the current model, the labels are updated every time the gradient is updated.</li>
+<li><strong>Trade-off</strong>: This method typically has <strong>less variance</strong> than Monte Carlo estimation but can introduce <strong>bias</strong> because it relies on the model's own (initially inaccurate) predictions.</li>
+</ul>
+<p><img alt="image.png" src="images/image%204.png" /></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>repeat:
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>run policy in environment, collect (s, a, r, s&#39;) tuples
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>update critic: &quot;your prediction for s was 5.0,
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                but r + prediction(s&#39;) = 7.0,
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                so adjust&quot;
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>update actor: &quot;action a in state s got more reward
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>               than the critic expected,
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>               so make a more likely in s&quot;
+</code></pre></div>
+<h3 id="monte-carlo-estimation-vs-bootstrapping">Monte Carlo Estimation vs Bootstrapping<a class="headerlink" href="#monte-carlo-estimation-vs-bootstrapping" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Monte Carlo</strong> uses full returns from actual sampled trajectories, so the target includes all the randomness from future rewards and transitions.</li>
+<li><strong>Bootstrapping</strong> uses an estimated value function to stand in for part of the future return, which cuts off some of that randomness.</li>
+</ul>
+<p>So the usual tradeoff is:</p>
+<ul>
+<li><strong>Monte Carlo:</strong> lower bias, higher variance</li>
+<li><strong>Bootstrapping:</strong> higher bias, lower variance</li>
+</ul>
+<p>One useful way to remember it:</p>
+<ul>
+<li><strong>More sampled future rewards</strong> → more variance</li>
+<li><strong>More reliance on learned value estimates</strong> → less variance, more bias</li>
+</ul>
+<h3 id="3-n-step-returns-the-hybrid-approach">3. N-Step Returns (The Hybrid Approach)<a class="headerlink" href="#3-n-step-returns-the-hybrid-approach" title="Permanent link">&para;</a></h3>
+<p>This is a "middle ground" that often works best in practice.</p>
+<ul>
+<li><strong>The Process</strong>: You sum the next <span class="arithmatex">\(n\)</span> rewards from an actual roll-out and then add the model's estimate for the <span class="arithmatex">\((n+1)\)</span>-th state.</li>
+<li><strong>The Target</strong>: <span class="arithmatex">\(y_{i,t} \approx \sum_{t0=t}^{t+n-1} r(s_{i,t0}, a_{i,t0}) + \hat{V}_\phi^\pi(s_{i,t+n})\)</span>.</li>
+<li><strong>Benefit</strong>: It balances the high variance of Monte Carlo (by using fewer samples) with the bias of bootstrapping (by using more real data before relying on an estimate)</li>
+<li>More real steps (bigger n) → <strong>less bias</strong>, because relying less on the critic's potentially wrong estimate</li>
+<li>Fewer real steps (smaller n) → <strong>less variance</strong>, because not accumulating noise from many stochastic transitions</li>
+</ul>
+<p><img alt="image.png" src="images/image%205.png" /></p>
+<h3 id="the-role-of-discount-factors-gamma">The Role of Discount Factors (<span class="arithmatex">\(\gamma\)</span>)<a class="headerlink" href="#the-role-of-discount-factors-gamma" title="Permanent link">&para;</a></h3>
+<p>When estimating values, especially for very long or infinite episodes, a <strong>discount factor</strong> (<span class="arithmatex">\(\gamma\)</span>) is used. This ensures rewards received sooner are weighted more heavily than those received later, preventing value estimates from growing infinitely large. A common value used in practice is 0.99.</p>
+<p><img alt="image.png" src="images/image%206.png" /></p>
+<h3 id="fitting-the-model">Fitting the Model<a class="headerlink" href="#fitting-the-model" title="Permanent link">&para;</a></h3>
+<p>In all these methods, the final step is to perform <strong>supervised learning</strong> on a neural network with parameters <span class="arithmatex">\(\phi\)</span>. The loss function used is typically a mean squared error between the estimated value and the chosen target (<span class="arithmatex">\(y_i\)</span>):
+<span class="arithmatex">\(\mathcal{L}(\phi) = \frac{1}{N} \sum_{i} ||\hat{V}_\phi^\pi(s_i) - y_i||^2\)</span>.</p>
+<p><img alt="image.png" src="images/image%207.png" /></p>
+<h2 id="5-off-policy-improvements">5. Off-Policy Improvements<a class="headerlink" href="#5-off-policy-improvements" title="Permanent link">&para;</a></h2>
+<p>To further increase data efficiency, the sources discuss <strong>off-policy</strong> methods, which allow the algorithm to reuse data from past policies rather than just the current one. This often involves:</p>
+<ul>
+<li><strong>Replay Buffers</strong>: Storing all past trial-and-error data to reuse in updates.</li>
+<li><strong>Importance Weights</strong>: Adjusting the gradient calculations to account for the fact that the data was collected by a different version of the policy.</li>
+</ul>
+<h1 id="off-policy-actor-critic-multiple-gradient-steps">Off-Policy Actor-Critic: Multiple Gradient Steps<a class="headerlink" href="#off-policy-actor-critic-multiple-gradient-steps" title="Permanent link">&para;</a></h1>
+<h2 id="problem">Problem<a class="headerlink" href="#problem" title="Permanent link">&para;</a></h2>
+<p>In vanilla on-policy actor-critic, we:</p>
+<ol>
+<li>Collect one batch of data from policy <span class="arithmatex">\(\pi_\theta\)</span></li>
+<li>Take <strong>one</strong> gradient step</li>
+<li>Throw away the data and recollect</li>
+</ol>
+<p>This is wasteful. <strong>Can we take multiple gradient steps on the same batch?</strong></p>
+<hr />
+<h2 id="step-1-the-on-policy-gradient-starting-point">Step 1: The On-Policy Gradient (Starting Point)<a class="headerlink" href="#step-1-the-on-policy-gradient-starting-point" title="Permanent link">&para;</a></h2>
+<p>The standard policy gradient with advantages:</p>
+<p><span class="arithmatex">\(\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} \sum_{t=1}^{T} \nabla_\theta \log \pi_\theta(a_{i,t} | s_{i,t}) \hat{A}^{\pi_\theta}(s_{i,t}, a_{i,t})\)</span></p>
+<p><strong>Problem:</strong> After one gradient step, <span class="arithmatex">\(\theta\)</span> changes to <span class="arithmatex">\(\theta'\)</span>, but the data was collected under <span class="arithmatex">\(\theta\)</span>. The gradient formula above assumes data came from <span class="arithmatex">\(\pi_\theta\)</span>, not <span class="arithmatex">\(\pi_{\theta'}\)</span>.</p>
+<hr />
+<h2 id="step-2-importance-weights-fix-the-distribution-mismatch">Step 2: Importance Weights Fix the Distribution Mismatch<a class="headerlink" href="#step-2-importance-weights-fix-the-distribution-mismatch" title="Permanent link">&para;</a></h2>
+<p>To use data from <span class="arithmatex">\(\pi_\theta\)</span> while updating <span class="arithmatex">\(\pi_{\theta'}\)</span>, we multiply by importance weights:</p>
+<p><span class="arithmatex">\(\nabla_{\theta'} J(\theta') \approx \sum_{t,i} \frac{\pi_{\theta'}(a_{i,t} | s_{i,t})}{\pi_\theta(a_{i,t} | s_{i,t})} \nabla_{\theta'} \log \pi_{\theta'}(a_{t,i} | s_{t,i}) \hat{A}^{\pi_\theta}(s_{t,i}, a_{t,i})\)</span></p>
+<p><strong>Intuition:</strong> The ratio <span class="arithmatex">\(\frac{\pi_{\theta'}}{\pi_\theta}\)</span> reweights each sample to account for the fact that <span class="arithmatex">\(\theta'\)</span> would have taken these actions with different probabilities than <span class="arithmatex">\(\theta\)</span>.</p>
+<hr />
+<h2 id="step-3-the-surrogate-objective">Step 3: The Surrogate Objective<a class="headerlink" href="#step-3-the-surrogate-objective" title="Permanent link">&para;</a></h2>
+<p>Using the identity <span class="arithmatex">\(p_\theta(\tau) \nabla_\theta \log p_\theta(\tau) = \nabla_\theta p_\theta(\tau)\)</span>, we can write an equivalent <strong>surrogate objective</strong> that we maximize directly:</p>
+<p><span class="arithmatex">\(\tilde{J}(\theta') \approx \sum_{t,i} \frac{\pi_{\theta'}(a_{i,t} | s_{i,t})}{\pi_\theta(a_{i,t} | s_{i,t})} \hat{A}^{\pi_\theta}(s_{t,i}, a_{t,i})\)</span></p>
+<p>The gradient of this objective w.r.t. <span class="arithmatex">\(\theta'\)</span> gives us exactly the importance-weighted policy gradient from Step 2.</p>
+<hr />
+<h2 id="step-4-what-goes-wrong-with-many-gradient-steps">Step 4: What Goes Wrong with Many Gradient Steps<a class="headerlink" href="#step-4-what-goes-wrong-with-many-gradient-steps" title="Permanent link">&para;</a></h2>
+<p>If we maximize <span class="arithmatex">\(\tilde{J}(\theta')\)</span> with many gradient steps:</p>
+<ul>
+<li>The advantages <span class="arithmatex">\(\hat{A}^{\pi_\theta}\)</span> are computed under the <strong>old</strong> policy <span class="arithmatex">\(\pi_\theta\)</span></li>
+<li>The optimizer will push <span class="arithmatex">\(\pi_{\theta'}\)</span> to put <strong>massive probability</strong> on actions that had high advantage</li>
+<li>The importance ratio <span class="arithmatex">\(\frac{\pi_{\theta'}}{\pi_\theta}\)</span> can blow up (e.g., become 100x or 1000x)</li>
+<li><strong>Result:</strong> <span class="arithmatex">\(\pi_{\theta'}\)</span> diverges far from <span class="arithmatex">\(\pi_\theta\)</span>, and the advantage estimates become meaningless → overfitting / policy collapse</li>
+</ul>
+<hr />
+<h2 id="step-5-two-ideas-to-fix-this">Step 5: Two Ideas to Fix This<a class="headerlink" href="#step-5-two-ideas-to-fix-this" title="Permanent link">&para;</a></h2>
+<h3 id="idea-1-kl-constraint">Idea 1 — KL Constraint<a class="headerlink" href="#idea-1-kl-constraint" title="Permanent link">&para;</a></h3>
+<p>Constrain how far <span class="arithmatex">\(\theta'\)</span> can drift from <span class="arithmatex">\(\theta\)</span>:</p>
+<p><span class="arithmatex">\(\mathbb{E}{s \sim \pi\theta} \left[ D_{KL}(\pi_{\theta'}(\cdot | s) | \pi_\theta(\cdot | s)) \right] \leq \delta\)</span></p>
+<p>This is used heavily in TRPO and later in LLM preference optimization (RLHF).</p>
+<h3 id="idea-2-clip-the-importance-weights-ppos-approach">Idea 2 — Clip the Importance Weights (PPO's approach)<a class="headerlink" href="#idea-2-clip-the-importance-weights-ppos-approach" title="Permanent link">&para;</a></h3>
+<p>Don't constrain the policy directly, but <strong>remove the incentive</strong> for the policy to diverge by bounding the ratio.</p>
+<hr />
+<h2 id="step-6-ppo-trick-1-clipping">Step 6: PPO Trick #1 — Clipping<a class="headerlink" href="#step-6-ppo-trick-1-clipping" title="Permanent link">&para;</a></h2>
+<p>Clip the importance ratio to <span class="arithmatex">\([1 - \epsilon, \ 1 + \epsilon]\)</span></p>
+<p><span class="arithmatex">\(\tilde{J}(\theta') \approx \sum_{t,i} \text{clip}\left(\frac{\pi_{\theta'}(a_{i,t} | s_{i,t})}{\pi_\theta(a_{i,t} | s_{i,t})}, \ 1 - \epsilon, \ 1 + \epsilon \right) \hat{A}^{\pi_\theta}(s_{t,i}, a_{t,i})\)</span></p>
+<p><strong>Effect:</strong> Even if <span class="arithmatex">\(\pi_{\theta'}\)</span> wants to put 100x more probability on a high-advantage action, the clipped ratio caps the benefit at <span class="arithmatex">\((1 + \epsilon)\)</span>. No incentive to deviate further.</p>
+<hr />
+<h2 id="step-7-ppo-trick-2-pessimistic-minimum">Step 7: PPO Trick #2 — Pessimistic Minimum<a class="headerlink" href="#step-7-ppo-trick-2-pessimistic-minimum" title="Permanent link">&para;</a></h2>
+<p>In rare cases, clipping can accidentally make the objective <em>better</em> than the unclipped version. PPO takes the <strong>minimum</strong> of both to be conservative:</p>
+<p><span class="arithmatex">\(\tilde{J}(\theta') \approx \sum_{t,i} \min\left( \frac{\pi_{\theta'}}{\pi_\theta} \hat{A}^{\pi_\theta}, \quad \text{clip}\left(\frac{\pi_{\theta'}}{\pi_\theta}, 1-\epsilon, 1+\epsilon\right) \hat{A}^{\pi_\theta} \right)\)</span></p>
+<p>This is the <strong>final PPO surrogate objective</strong>.</p>
+<hr />
+<h2 id="step-8-ppo-trick-3-generalized-advantage-estimation-gae">Step 8: PPO Trick #3 — Generalized Advantage Estimation (GAE)<a class="headerlink" href="#step-8-ppo-trick-3-generalized-advantage-estimation-gae" title="Permanent link">&para;</a></h2>
+<p>Instead of using a single n-step advantage estimate, GAE blends multiple horizons:</p>
+<p><strong>n-step advantage:</strong></p>
+<p><span class="arithmatex">\(\hat{A}_n^\pi(s_t, a_t) = \sum_{t'=t}^{t+n} \gamma^{t'-t} r(s_{t'}, a_{t'}) - \hat{V}_\phi^\pi(s_t) + \gamma^n \hat{V}_\phi^\pi(s_{t+n})\)</span></p>
+<p><strong>GAE = weighted sum of all n-step estimates</strong> <span class="arithmatex">\(\hat{A}_n^\pi(s_t, a_t)\)</span><strong>:</strong></p>
+<p><span class="arithmatex">\(\hat{A}_{GAE}^\pi(s_t, a_t) = \sum_{n=1}^{\infty} w_n \hat{A}_n^\pi(s_t, a_t)\)</span></p>
+<p><strong>Weights decay exponentially:</strong> <span class="arithmatex">\(w_n \propto \lambda^{n-1}\)</span></p>
+<ul>
+<li>Small <span class="arithmatex">\(\lambda\)</span> → more weight on short horizons → <strong>low variance, high bias</strong></li>
+<li>Large <span class="arithmatex">\(\lambda\)</span> → more weight on long horizons → <strong>high variance, low bias</strong></li>
+</ul>
+<hr />
+<h2 id="the-full-ppo-algorithm">The Full PPO Algorithm<a class="headerlink" href="#the-full-ppo-algorithm" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Sample batch of trajectories <span class="arithmatex">\({(s_{1,i}, a_{1,i}, \ldots, s_{T,i}, a_{T,i})}\)</span> from <span class="arithmatex">\(\pi_\theta\)</span>. </li>
+<li>Fit <span class="arithmatex">\(\hat{V}_\phi^{\pi\theta}\)</span> to sampled reward sums. </li>
+<li>Compute <span class="arithmatex">\(\hat{A}_{GAE}^\pi\)</span> for all <span class="arithmatex">\((s,a)\)</span> pairs in batch. </li>
+<li>Take <span class="arithmatex">\(M\)</span> gradient steps on the clipped surrogate objective.</li>
+<li>Go back to step 1.</li>
+</ol>
+<h3 id="typical-hyperparameters">Typical Hyperparameters<a class="headerlink" href="#typical-hyperparameters" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Batch size</td>
+<td>~2000 timesteps</td>
+</tr>
+<tr>
+<td>Policy update epochs</td>
+<td>~10</td>
+</tr>
+<tr>
+<td>Gradient steps per iteration</td>
+<td>~300 (batch size 64)</td>
+</tr>
+<tr>
+<td>Clipping range <span class="arithmatex">\(\epsilon\)</span></td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>Total iterations</td>
+<td>~500 → 1M timesteps</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-takeaway">Key Takeaway<a class="headerlink" href="#key-takeaway" title="Permanent link">&para;</a></h2>
+<p>PPO = <strong>"take multiple gradient steps on the same batch, but don't let the policy change too much."</strong> The clipped surrogate objective is a simple, effective way to enforce this without explicitly computing KL divergences.</p>
+<h1 id="replay-buffers">Replay Buffers<a class="headerlink" href="#replay-buffers" title="Permanent link">&para;</a></h1>
+<hr />
+<h2 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h2>
+<p>PPO reuses one batch for multiple gradient steps. But can we go further — reuse <em>all</em> past data from previous batches? This is "fully off-policy."</p>
+<p>Two key ideas: (1) maintain a replay buffer of all past transitions, (2) fix the equations so they work with off-policy data.</p>
+<hr />
+<h2 id="the-naive-broken-algorithm">The Naive (Broken) Algorithm<a class="headerlink" href="#the-naive-broken-algorithm" title="Permanent link">&para;</a></h2>
+<p>Start with the on-policy actor-critic but sample from the replay buffer instead:</p>
+<ol>
+<li>Collect experience from <span class="arithmatex">\(\pi_\theta\)</span>, store <span class="arithmatex">\((s, a, s', r)\)</span> in buffer <span class="arithmatex">\(\mathcal{R}\)</span></li>
+<li>Sample minibatch <span class="arithmatex">\({s_i, a_i, r_i, s'_i}\)</span> from <span class="arithmatex">\(\mathcal{R}\)</span></li>
+<li>Update <span class="arithmatex">\(\hat{V}^\pi_\phi\)</span> using targets:
+<span class="arithmatex">\(y_i = r_i + \gamma \hat{V}^\pi_\phi(s'_i)\)</span></li>
+<li>Evaluate advantage:
+<span class="arithmatex">\(\hat{A}^\pi(s_i, a_i) = r(s_i, a_i) + \gamma \hat{V}^\pi_\phi(s'i) - \hat{V}^\pi\phi(s_i)\)</span></li>
+<li>Compute policy gradient:
+<span class="arithmatex">\(\nabla_\theta J(\theta) \approx \frac{1}{N} \sum_i \nabla_\theta \log \pi_\theta(a_i | s_i) , \hat{A}^\pi(s_i, a_i)\)</span></li>
+<li>Update parameters:
+<span class="arithmatex">\(\theta \leftarrow \theta + \alpha \nabla_\theta J(\theta)\)</span></li>
+</ol>
+<p><strong>Why is this broken?</strong></p>
+<p>Two problems:</p>
+<p><strong>Problem 1 — Value function targets are wrong.</strong> The target <span class="arithmatex">\(y_i = r_i + γV̂(s'_i)\)</span> assumes the next-state value is computed under the <em>current</em> policy <span class="arithmatex">\(π_θ\)</span>. But the transition <span class="arithmatex">\((s_i, a_i, s'_i)\)</span> came from an <em>old</em> policy. The future reward from <span class="arithmatex">\(s'_i\)</span> depends on what action you'd take there. <span class="arithmatex">\(V(s')\)</span> bakes in the assumption that you follow <span class="arithmatex">\(\pi\)</span> — but the data was generated by some old <span class="arithmatex">\(π_{old}\)</span>. The value function is learning something that doesn't correspond to any single policy.</p>
+<p><strong>Problem 2 — Policy gradient uses wrong actions.</strong> Step 5 computes <span class="arithmatex">\(∇_θ log π_θ(a_i|s_i)\)</span> — but <span class="arithmatex">\(a_i\)</span> was chosen by the old policy, not the current one. The advantage <span class="arithmatex">\(Â^π(s_i, a_i)\)</span> evaluates how good that old action was, but we need to evaluate actions the <em>current</em> policy would take.</p>
+<p><img alt="image.png" src="images/image%208.png" /></p>
+<hr />
+<h3 id="the-fix-use-qs-a-instead-of-vs">The Fix: Use <span class="arithmatex">\(Q(s, a)\)</span> Instead of <span class="arithmatex">\(V(s)\)</span><a class="headerlink" href="#the-fix-use-qs-a-instead-of-vs" title="Permanent link">&para;</a></h3>
+<p><strong>Key insight:</strong> <span class="arithmatex">\(V(s)\)</span> implicitly depends on which policy's actions you average over. But <span class="arithmatex">\(Q(s, a)\)</span> takes the action as an explicit input — so it doesn't matter <em>who</em> chose action a. You can evaluate <span class="arithmatex">\(Q\)</span> on any <span class="arithmatex">\((s, a)\)</span> pair regardless of which policy generated it.</p>
+<p><strong>Recall the Bellman equation for Q:</strong></p>
+<p><span class="arithmatex">\(Q^{π_θ}(s, a) = r(s, a) + γ 𝔼_{s' ~ p(·|s,a), ā' ~ π_θ(·|s')} [Q^{π_θ}(s', ā')]\)</span></p>
+<p>The next-state action <span class="arithmatex">\(ā'\)</span> is sampled from the <strong>current</strong> policy <span class="arithmatex">\(π_θ\)</span>, not from the buffer. This is what makes it valid for off-policy data.</p>
+<hr />
+<h3 id="the-fixed-algorithm-step-by-step">The Fixed Algorithm (Step by Step)<a class="headerlink" href="#the-fixed-algorithm-step-by-step" title="Permanent link">&para;</a></h3>
+<p><strong>Step 1: Collect &amp; Store</strong></p>
+<p>Take action <span class="arithmatex">\(a ~ π_θ(a|s)\)</span>, observe <span class="arithmatex">\((s, a, s', r)\)</span>, store in replay buffer <span class="arithmatex">\(R\)</span>.</p>
+<p><strong>Step 2: Sample Minibatch</strong></p>
+<p>Sample batch <span class="arithmatex">\({s_i, a_i, r_i, s'_i}\)</span> from buffer <span class="arithmatex">\(R\)</span>. These transitions may be from old policies — that's fine.</p>
+<p><strong>Step 3: Update Q-function</strong></p>
+<p>For each sampled transition, compute the target:</p>
+<ul>
+<li>Sample fresh action from current policy: <span class="arithmatex">\(ā'_i ~ π_θ(·|s'_i)\)</span></li>
+<li>Compute target: <span class="arithmatex">\(y_i = r(s_i, a_i) + γQ̂^π_ϕ(s'_i, ā'_i)\)</span></li>
+</ul>
+<p>Note: <span class="arithmatex">\(s_i\)</span> and <span class="arithmatex">\(a_i\)</span> are from the buffer (old policy), but <span class="arithmatex">\(ā'_i\)</span> is from the <em>current</em> policy. This is the critical fix — the bootstrap target uses the current policy's action at the next state.</p>
+<p>Minimize the loss:</p>
+<p><span class="arithmatex">\(L(ϕ) = \frac1N * Σ_i ‖Q̂^π_ϕ(s_i, a_i) - y_i‖²\)</span></p>
+<p><strong>Step 4: Update Policy</strong></p>
+<p>Now we also fix the policy gradient. Instead of using buffer actions, sample <em>new</em> actions from the current policy:</p>
+<ul>
+<li>Sample: <span class="arithmatex">\(a^π_i ~ π_θ(·|s_i)\)</span></li>
+</ul>
+<p>Compute gradient:</p>
+<p><span class="arithmatex">\(∇_θ J(θ) ≈ \frac1N Σ_i ∇_θ log π_θ(a^π_i|s_i) · Q̂^π(s_i, a^π_i)\)</span></p>
+<p>Both the action <span class="arithmatex">\(a^π_i\)</span> and the Q-evaluation use the current policy — <strong>not</strong> the buffer's actions.</p>
+<p>Note: we use <span class="arithmatex">\(Q̂\)</span> directly here instead of the advantage <span class="arithmatex">\(Â = Q - V\)</span>. This is higher variance (no baseline subtraction), but acceptable because we now have much more data from the full replay buffer.</p>
+<p><strong>Step 5: Gradient Update</strong></p>
+<p><span class="arithmatex">\(θ ← θ + α∇_θ J(θ)\)</span></p>
+<p><img alt="image.png" src="images/image%209.png" /></p>
+<hr />
+<h3 id="remaining-issue">Remaining Issue<a class="headerlink" href="#remaining-issue" title="Permanent link">&para;</a></h3>
+<p>The states <span class="arithmatex">\(s_i\)</span> in the buffer didn't come from the current policy's state distribution <span class="arithmatex">\(p_θ(s)\)</span>. There's nothing we can do about this — we just accept it.</p>
+<p><strong>Intuition for why it's okay:</strong> We want an optimal policy on <span class="arithmatex">\(p_θ(s)\)</span>, but we're optimizing on a <em>broader</em> state distribution (mix of all past policies). In practice, optimizing on a broader distribution often still works and can even help with generalization.</p>
+<hr />
+<h3 id="implementation-detail-reparameterization-trick">Implementation Detail: Reparameterization Trick<a class="headerlink" href="#implementation-detail-reparameterization-trick" title="Permanent link">&para;</a></h3>
+<p>For continuous actions with a Gaussian policy, instead of using the log-likelihood policy gradient, you can use the <strong>reparameterization trick</strong> to get a lower-variance gradient estimate:</p>
+<p><span class="arithmatex">\(a = μ_θ(s) + σ_θ(s) · ε\)</span>, where ε ~ N(0, 1)</p>
+<p>This lets you backprop through the action sampling directly into <span class="arithmatex">\(Q̂\)</span>, rather than relying on the REINFORCE-style log π gradient.</p>
+<hr />
+<h3 id="this-becomes-sac-soft-actor-critic">This Becomes SAC (Soft Actor-Critic)<a class="headerlink" href="#this-becomes-sac-soft-actor-critic" title="Permanent link">&para;</a></h3>
+<p>The practical instantiation of this approach is SAC (Haarnoja et al., 2018), which adds entropy regularization and some Q-function fitting tricks (twin Q-networks, target networks — covered in later lectures).</p>
+<hr />
+<h3 id="ppo-vs-sac-when-to-use-which">PPO vs SAC — When to Use Which<a class="headerlink" href="#ppo-vs-sac-when-to-use-which" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>PPO</th>
+<th>SAC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Off-policy degree</td>
+<td>Mild (multiple steps on one batch)</td>
+<td>Full (replay buffer of all past data)</td>
+</tr>
+<tr>
+<td>Data efficiency</td>
+<td>Lower</td>
+<td>Much higher</td>
+</tr>
+<tr>
+<td>Stability</td>
+<td>More stable, easier to tune</td>
+<td>Harder to tune, less stable</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Simulation (cheap data), LLM RLHF</td>
+<td>Real-world RL (expensive data)</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.top", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
