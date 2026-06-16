@@ -1,1 +1,62 @@
 *.Identifier
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# MkDocs site build (site_dir is ../elvstudy_site, outside the repo)
+/site/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Model files and caches
+*.bin
+*.safetensors
+*.gguf
+models/
+.cache/
+huggingface/
+
+# Benchmark results (keep structure, ignore data)
+bench/results.jsonl
+bench/*.png
+bench/*.pdf
+
+# Weights and training outputs
+checkpoints/
+outputs/
+wandb/
+runs/
+
+# Data
+data/
+datasets/
+*.csv
+*.tsv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+.env

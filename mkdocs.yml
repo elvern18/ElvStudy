@@ -1,0 +1,89 @@
+# Material for MkDocs — builds the study notes at the repo root into a static
+# site published to GitHub Pages. Preview locally with `mkdocs serve`.
+site_name: ElvStudy
+site_description: Self-directed ML learning notes and explorations.
+site_author: elvern18
+site_url: https://elvern18.github.io/ElvStudy/
+
+repo_url: https://github.com/elvern18/ElvStudy
+repo_name: elvern18/ElvStudy
+
+# Notes live at the repo root as Topic/README.md (+ images/), not in a docs/
+# folder. mkdocs-same-dir lets docs_dir be the repo root; site_dir sits outside
+# it (required: site_dir may not live inside docs_dir).
+docs_dir: .
+site_dir: ../elvstudy_site
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  # Lets docs_dir be the repo root (stock MkDocs forbids it). Keep the notes at
+  # the root instead of moving them into docs/. Set DISABLE_MKDOCS_2_WARNING to
+  # silence this plugin's promotional build-log nag (see CI workflow / README).
+  - same-dir
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - toc:
+      permalink: true
+  # LaTeX math: arithmatex normalizes $...$ / $$...$$ for MathJax (see below).
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+# Keep code, infra, and session-tracking files out of the published site.
+# (Dotfiles like .venv/ and .github/ are ignored automatically.)
+exclude_docs: |
+  bench/
+  train/
+  eval/
+  reports/
+  docs/
+  *.py
+  PROGRESS.md
+  ROADMAP.md
+  SETUP.md
+  requirements*.txt
+  mkdocs.yml

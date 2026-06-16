@@ -1,0 +1,8 @@
+# Documentation site dependencies (Material for MkDocs) — separate from the ML
+# requirements.txt so the site builds without installing torch/vllm/etc.
+#
+#   python3 -m venv .venv && .venv/bin/pip install -r requirements-docs.txt
+#   .venv/bin/mkdocs serve     # preview at http://127.0.0.1:8000
+# Tip: prefix with DISABLE_MKDOCS_2_WARNING=true to silence same-dir's build nag.
+mkdocs-material>=9.5
+mkdocs-same-dir>=0.1.3
